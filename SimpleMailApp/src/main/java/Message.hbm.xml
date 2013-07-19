@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 12, 2013 9:09:30 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.me.pojo.Message" table="messages">
+        <id name="messageID" type="java.lang.String">
+            <column name="MESSAGEID" />
+            <generator class="assigned" />
+        </id>
+        
+        <property name="userName" type="java.lang.String">
+            <column name="userName" />
+        </property>
+        
+        <property name="fromUser" type="java.lang.String">
+            <column name="fromUser" />
+        </property>
+        
+        <property name="message" type="java.lang.String" access="field">
+            <column name="message" />
+        </property>
+        
+        <property name="messageDate" type="java.lang.String">
+            <column name="messageDate" />
+        </property>
+        
+    </class>
+</hibernate-mapping>
