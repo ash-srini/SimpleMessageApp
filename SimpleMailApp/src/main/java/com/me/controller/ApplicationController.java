@@ -84,7 +84,7 @@ public class ApplicationController {
 				Query query =  hibsession.createQuery(hql);
 				query.setString("ipUserID", ipUserID);
 				User rsUser = (User) query.uniqueResult();
-				System.out.println("Username result"+rsUser.getUsername());
+				//System.out.println("Username result"+rsUser.getUsername());
 				
 				if(!rsUser.equals(null)){
 					request.setAttribute("rsUser", rsUser);
@@ -200,8 +200,21 @@ public class ApplicationController {
 	}
 	
 	@RequestMapping(value="/addContact.htm", method = RequestMethod.POST)
-	public String addContact(){
-		//
+	public String addContact(@RequestParam("user") User rsUser, HttpServletRequest request, HttpServletResponse response){
+		//Hibernate to add contacts
+		String uname = rsUser.getUsername();
+		System.out.println("username*****"+uname);
+		Configuration cfg = new Configuration();
+		SessionFactory sf = cfg.configure().buildSessionFactory();
+		Session hibsession = sf.openSession();
+		
+		/*
+		String hql = "From Contact contact WHERE contact.userName=:uname";
+		Query query = hibsession.createQuery(hql);
+		query.setString("uname", uname);
+		String s = (String) query.uniqueResult();
+		System.out.println("contact :"+s);
+		*/
 		return "addContact";
 	}
 	

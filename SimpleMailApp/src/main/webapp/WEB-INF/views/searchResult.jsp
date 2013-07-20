@@ -19,7 +19,7 @@ td{
 <body>
 <center>
 	<h3>User Profile</h3>
-	<form:form action="addContact.htm">
+	<form:form commandName="user" action="addContact.htm" method="POST">
 	<table id="displayUser" class="table table-bordered" style="width: 700px;">
 		<tr>
 			<th>User ID</th>
@@ -35,7 +35,7 @@ td{
 			<td align="center"> <c:out value="${rsUser.age }"></c:out></td>
 			<td align="center"><c:out value="${ rsUser.country}"></c:out></td>
 			<td align="center"><c:out value="${ rsUser.city}"></c:out></td>
-			<input type="hidden" path="user" value="${ rsUser}" name="user"/>
+			<input type="hidden"  value="${ rsUser}" name="user"/>
 			<td align="center"><input type="submit" class="btn btn-primary" value="Add >>" /></td>
 		</tr>
 	</table>

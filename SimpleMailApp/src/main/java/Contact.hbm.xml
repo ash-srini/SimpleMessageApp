@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 20, 2013 12:51:01 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.me.pojo.Contact" table="contacts">
+        <id name="contactID" type="java.lang.String">
+            <column name="contactID" />
+            <generator class="assigned" />
+        </id>
+        <property name="userName" type="java.lang.String">
+            <column name="userName" />
+        </property>
+        <property name="contactName" type="java.lang.String">
+            <column name="contactName" />
+        </property>
+        <property name="comments" type="java.lang.String">
+            <column name="comments" />
+        </property>
+        <property name="dateAdded" type="java.lang.String">
+            <column name="dateAdded" />
+        </property>
+    </class>
+</hibernate-mapping>
