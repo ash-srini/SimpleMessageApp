@@ -5,41 +5,48 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.naming.spi.DirStateFactory.Result;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.mapping.Value;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.me.pojo.Contact;
 import com.me.pojo.Message;
-import com.me.pojo.MessageList;
+
 import com.me.pojo.User;
 
 @SuppressWarnings("deprecation")
 @Controller
 public class ApplicationController {
 	
+	VelocityEngine ve = new VelocityEngine();
+	
+	//ve.init();
+	
 	@RequestMapping(value="/showMessages.htm", method=RequestMethod.GET)
-	public String showMessages(Model model, HttpServletRequest request, HttpServletResponse response){
+	public String showMessages(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		Message message = new Message();
 		model.addAttribute("message", message);
+		
+		
 		
 		HttpSession s = request.getSession();
 		String uNAME = (String) s.getAttribute("uName");
@@ -84,7 +91,7 @@ public class ApplicationController {
 				Query query =  hibsession.createQuery(hql);
 				query.setString("ipUserID", ipUserID);
 				User rsUser = (User) query.uniqueResult();
-				//System.out.println("Username result"+rsUser.getUsername());
+			
 				
 				if(!rsUser.equals(null)){
 					request.setAttribute("rsUser", rsUser);
@@ -107,7 +114,7 @@ public class ApplicationController {
 			Query query =  hibsession.createQuery(hql);
 			query.setString("ipUserName", ipUserName);
 			User rsUser = (User) query.uniqueResult();
-			System.out.println("Username result"+rsUser.getUsername());
+			//System.out.println("Username result"+rsUser.getUsername());
 			
 			
 			if(!rsUser.equals(null)){
@@ -200,16 +207,19 @@ public class ApplicationController {
 	}
 	
 	@RequestMapping(value="/addContact.htm", method = RequestMethod.POST)
-	public String addContact(@RequestParam("user") User rsUser, HttpServletRequest request, HttpServletResponse response){
+	public String addContact(Model model, @RequestParam("username") String userName, HttpServletRequest request, HttpServletResponse response){
+		
+		Contact contact = new Contact();
+		model.addAttribute(contact);
 		//Hibernate to add contacts
-		String uname = rsUser.getUsername();
-		System.out.println("username*****"+uname);
+		
+		System.out.println("username*****"+userName);
 		Configuration cfg = new Configuration();
 		SessionFactory sf = cfg.configure().buildSessionFactory();
 		Session hibsession = sf.openSession();
 		
 		/*
-		String hql = "From Contact contact WHERE contact.userName=:uname";
+		String hql = "From Contact contact WHERE contact.userName=:userName";
 		Query query = hibsession.createQuery(hql);
 		query.setString("uname", uname);
 		String s = (String) query.uniqueResult();
@@ -217,7 +227,88 @@ public class ApplicationController {
 		*/
 		return "addContact";
 	}
+	@RequestMapping(value="/viewContacts.htm", method = RequestMethod.GET)
+	public String viewContacts(Model model, HttpServletRequest request, HttpServletResponse response){
+		
+		Contact contact = new Contact();
+		model.addAttribute(contact);
+		HttpSession s = request.getSession();
+		String uNAME = (String) s.getAttribute("uName");
+		System.out.println("**********"+uNAME);
+		//Hibernate
+		Configuration cfg = new Configuration();
+		SessionFactory sf = cfg.configure().buildSessionFactory();
+		Session hibsession = sf.openSession();
+		
+		String hql = "From Contact contact WHERE contact.userName=:uName";
+		Query query = hibsession.createQuery(hql);
+		query.setString("uName", uNAME);
+		ArrayList<Contact> result = (ArrayList<Contact>) query.list();
+		
+		request.setAttribute("result", result);
+		System.out.println(result); 
+		return "viewContacts";
+	}
 	
+	@RequestMapping(value="/changePassword.htm", method=RequestMethod.GET)
+	public String changePassword(Model model){
+		User user = new User();
+		model.addAttribute("user", user);
+		return "changePassword";
+	}
+	
+	@RequestMapping(value="/pwordChangeConfirmation.htm", method=RequestMethod.POST)
+	public String pwordChangeConfirmation(@ModelAttribute("user") User user, @RequestParam("newpword") String newpword, @RequestParam("confirmpword") String confirmpword, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		//Velocity engine init
+		ve.init();
+		VelocityContext vc = new VelocityContext();
+		
+		//check if old password is correct
+		Boolean token = false;
+		String username = (String) request.getSession().getAttribute("uName");
+		System.out.println(username);
+		user.getPassword();
+		
+		//Hibernate
+		Configuration cfg = new Configuration();
+		SessionFactory sf = cfg.configure().buildSessionFactory();
+		Session hibsession = sf.openSession();
+		
+		String hql = "FROM User user WHERE user.username =:username";
+		Query query = hibsession.createQuery(hql);
+		query.setString("username", username);
+		User rsUser = (User) query.uniqueResult();
+		
+		if(user.getPassword().equals(rsUser.getPassword())){
+			if(newpword.equals(confirmpword)){
+			
+				String update = "UPDATE User set password=:newpword WHERE username =:username";
+				Query q = hibsession.createQuery(update);
+				q.setString("newpword", newpword);
+				q.setString("username", username);
+				int i = q.executeUpdate();
+				System.out.println("Rows affetctd \t"+i);
+				token = true;
+				vc.put("noerror", "pass");
+			}
+			else{
+				request.setAttribute("error", "notmatching");
+				vc.put("error", "notmatching");
+			}
+		}
+		else{
+			request.setAttribute("error", "oldincorrect");
+		}
+		//Display if password has changed or not
+		if(token == true){
+		return "pwordChangeConfirmation";
+		}
+		else
+		{
+			return "changePassword";
+		}
+		
+	}
 }
 
 

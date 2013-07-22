@@ -6,14 +6,33 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+ <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 <title>Insert title here</title>
+<style type="text/css">
+ body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
+
+</style>
 </head>
 <body>
+<center>
+<h2>Sign in</h2>
+<div class="container">
 	<form:form commandName="user" action="home.htm" method="POST">
-		Username :<form:input path="username" name="username"/>
-		Password : <form:input path="password" name="password"/>
-		<input type="checkbox" name="remember"/>Remember me for 1 week
-		<input type="submit" value="login" />
+	<div class="control-group">
+		Username : <form:input path="username" name="username"/><br />
+		Password : <form:input path="password" name="password"/><br />
+		<input type="checkbox" name="remember"/> Remember me <br /><br />
+		<input type="submit" value="Sign in"  class="btn btn-large btn-primary"/>
+		</div>
 	</form:form>
+	
+	  
+</div>
+</center>
 </body>
 </html>	

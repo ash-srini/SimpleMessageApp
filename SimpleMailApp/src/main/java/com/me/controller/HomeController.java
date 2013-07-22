@@ -46,6 +46,8 @@ public class HomeController {
 		Cookie[] c= request.getCookies();
 		System.out.println(c);
 		Boolean token = false;
+		return "login";
+		/*
 		if(!c.equals(null)){
 			for(int i=0; i<c.length; i++){
 				if(c[i].getName().equals("username")){
@@ -66,6 +68,7 @@ public class HomeController {
 			System.out.println("login");
 			return "login";
 		}
+		*/
 	}
 	
 	@SuppressWarnings("deprecation")

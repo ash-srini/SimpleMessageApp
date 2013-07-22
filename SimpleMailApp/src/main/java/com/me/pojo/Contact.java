@@ -7,6 +7,7 @@ public class Contact {
 	private String contactName;
 	private String comments;
 	private String dateAdded;
+	
 	public String getContactID() {
 		return contactID;
 	}

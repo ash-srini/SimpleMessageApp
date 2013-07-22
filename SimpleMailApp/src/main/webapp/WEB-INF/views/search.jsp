@@ -13,6 +13,7 @@
 	#leftside{
 		float: left;
 		width: 400px;
+		padding-top: 100px;
 	}
 	#rightside{
 		float: left;
@@ -30,10 +31,11 @@
 <div id="leftside">
 <ul>
 
-		<a href="${pageContext.servletContext.contextPath}/search.htm"><li>Search</li></a>
-		<a href="${pageContext.servletContext.contextPath}/showMessages.htm"><li>ShowMessages</li></a>		
-		<a href="#"><li>View Contacts</li></a>
-		<a href="#"><li>Change Password</li></a>
+		
+	<a href="${pageContext.servletContext.contextPath}/search.htm"><li>Search</li></a><br />
+		<a href="${pageContext.servletContext.contextPath}/showMessages.htm"><li>ShowMessages</li></a><br />		
+		<a href="${pageContext.servletContext.contextPath}/viewContacts.htm"><li>View Contacts</li></a><br />
+		<a href="${pageContext.servletContext.contextPath}/changePassword.htm"><li>Change Password</li></a><br />
 	</ul>
 </div>
 	
