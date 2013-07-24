@@ -20,8 +20,9 @@ td{
 <center>
 	<h3>User Profile</h3>
 	<form:form commandName="user" action="addContact.htm" method="POST">
-	<!-- <input type="hidden"  value="${ rsUser.username}" name="userName"/> -->
+
 	<table id="displayUser" class="table table-bordered" style="width: 700px;">
+	
 		<tr>
 			<th>User ID</th>
 			<th>Username</th>
@@ -30,16 +31,18 @@ td{
 			<th>City</th>
 			<th>Add Contact</th>
 		</tr>
+		<c:forEach items="${rsUser }" var="rsUser">
 		<tr>
 		
 			<td align="center"><c:out value="${rsUser.userID}"></c:out></td>
 			<td align="center"><c:out value="${rsUser.username }"></c:out></td>
-			<td align="center"> <c:out value="${rsUser.age }"></c:out></td>
+			<td align="center"><c:out value="${rsUser.age }"></c:out></td>
 			<td align="center"><c:out value="${ rsUser.country}"></c:out></td>
 			<td align="center"><c:out value="${ rsUser.city}"></c:out></td>
 			<td align="center"><input type="submit" class="btn btn-primary" value="Add >>" /></td>
-			
+				
 		</tr>
+		</c:forEach>
 	</table>
 	</form:form>
 </center>

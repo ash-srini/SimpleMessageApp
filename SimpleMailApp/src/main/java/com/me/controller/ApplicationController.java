@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,11 +14,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,7 +79,7 @@ public class ApplicationController {
 	}
 	//Search By ID
 	@RequestMapping(value="/searchResult.htm", method=RequestMethod.POST)
-	public String searchLogic(@ModelAttribute("user") User user, HttpServletRequest request, @RequestParam("searchtype") String searchtype){
+	public String searchLogic(@ModelAttribute("user") User user, HttpServletRequest request, @RequestParam("searchtype") String searchtype, HttpServletResponse response, @RequestParam("maxage") String maxage, @RequestParam("minage") String minage){
 		if(searchtype.equals("byid")){
 		//Get entered member id from jsp
 				String ipUserID = user.getUserID();
@@ -90,7 +93,7 @@ public class ApplicationController {
 				String hql = "FROM User user WHERE user.userID=:ipUserID";
 				Query query =  hibsession.createQuery(hql);
 				query.setString("ipUserID", ipUserID);
-				User rsUser = (User) query.uniqueResult();
+				List rsUser =  query.list()	;
 			
 				
 				if(!rsUser.equals(null)){
@@ -113,7 +116,7 @@ public class ApplicationController {
 			String hql = "FROM User user WHERE user.username=:ipUserName";
 			Query query =  hibsession.createQuery(hql);
 			query.setString("ipUserName", ipUserName);
-			User rsUser = (User) query.uniqueResult();
+			List rsUser =  query.list()	;
 			//System.out.println("Username result"+rsUser.getUsername());
 			
 			
@@ -126,7 +129,7 @@ public class ApplicationController {
 		}else if(searchtype.equals("quick")){
 			
 			String gender = user.getGender();
-			String age = user.getAge();
+			//String age = user.getAge();
 			String country = user.getCountry();
 			String city = user.getCity();
 			
@@ -136,16 +139,30 @@ public class ApplicationController {
 			SessionFactory sf = cfg.configure().buildSessionFactory();
 			Session hibsession = sf.openSession();
 			
-
-			//Hibernate Query
-			String hql = "FROM User user WHERE user.gender=:gender and user.age=:age and user.country:=country and user.city=:city ";
-			Query query = hibsession.createQuery(hql);
-			query.setString("gender", gender);
-			query.setString("age", age);
-			query.setString("country", country);
-			query.setString("city", city);
-			User rsUser = (User) query.uniqueResult();
-			
+			//hql criteria api
+			Criteria crit = hibsession.createCriteria(user.getClass());
+			if(!(minage.equals(null) || maxage.equals(null))){
+				crit.add(Restrictions.between("age", minage, maxage));
+			}
+			else{
+				crit.add(Restrictions.between("age", 0, 100));
+			}
+			if(!(user.getCity().equals(null) || user.getCity().equals(""))){
+				crit.add(Restrictions.eq("city", user.getCity()));
+			}else{
+				request.setAttribute("errorcity", "*enter a city");
+				return "search";
+				
+			}
+			if(!(user.getCountry().equals(null) || user.getCountry().equals(""))){
+				crit.add(Restrictions.eq("country", user.getCountry())	);
+			}else{
+				request.setAttribute("errorcountry", "*enter a country");
+				return "search";
+			}
+			crit.add(Restrictions.eq("gender", gender));
+			List rsUser = crit.list();
+			System.out.println(rsUser+"*********");
 			
 			if(!rsUser.equals(null)){
 				request.setAttribute("rsUser", rsUser);
@@ -153,7 +170,6 @@ public class ApplicationController {
 			}else{
 				return "search";
 			}
-			
 		}
 		else{
 			return "search";
@@ -273,6 +289,10 @@ public class ApplicationController {
 		Configuration cfg = new Configuration();
 		SessionFactory sf = cfg.configure().buildSessionFactory();
 		Session hibsession = sf.openSession();
+		
+		
+		
+		
 		
 		String hql = "FROM User user WHERE user.username =:username";
 		Query query = hibsession.createQuery(hql);

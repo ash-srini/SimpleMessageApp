@@ -75,7 +75,8 @@
 			</tr>
 			<tr>
 				<td align="left">Age : </td>
-				<td><form:input path="age" class="input-mini" type="text"  size="2" name="age" /></td>
+				<td><input  class="input-mini" type="text"  size="2" name="minage" />
+				to <input  class="input-mini" type="text"  size="2" name="maxage" /></td>
 			</tr>
 			<tr>
 				<td align="left">Search Location : </td>
